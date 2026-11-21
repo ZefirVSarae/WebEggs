@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Eggs</title>
+    <style>
+        :root {
+            /* Material 3 Expressive Dark Theme */
+            --md-sys-color-background: #1a1a1a;
+            --md-sys-color-surface-container: #2b2b2b;
+            --md-sys-color-surface-container-hover: #383838;
+            --md-sys-color-on-surface: #e6e1e5;
+            --md-sys-color-on-surface-variant: #cac4d0;
+            --md-sys-color-primary: #d0bcff;
+            --md-sys-color-primary-container: #4f378b;
+            --md-sys-color-outline: #49454f;
+            --font-family: system-ui, -apple-system, sans-serif;
+            --font-pixel: 'Courier New', Courier, monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--md-sys-color-background);
+            color: var(--md-sys-color-on-surface);
+            font-family: var(--font-family);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Шапка */
+        header {
+            padding: 24px;
+            border-bottom: 1px solid var(--md-sys-color-outline);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        h1 {
+            font-family: var(--font-pixel);
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow: 2px 2px 0px #000;
+        }
+
+        /* Кнопка выбора папки */
+        .btn-load {
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-primary);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: var(--font-family);
+        }
+
+        .btn-load:hover {
+            background-color: #5e46a3;
+        }
+
+        .btn-load:active {
+            transform: scale(0.96);
+        }
+
+        /* Контейнер карточек */
+        main {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Material 3 Expressive Card */
+        .egg-card {
+            background-color: var(--md-sys-color-surface-container);
+            border-radius: 28px;
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            animation: fadeIn 0.3s ease-out forwards;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .egg-card:hover {
+            background-color: var(--md-sys-color-surface-container-hover);
+        }
+
+        .egg-card:active {
+            transform: scale(0.98);
+        }
+
+        .egg-info {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .egg-filename {
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--md-sys-color-on-surface);
+        }
+
+        .egg-title {
+            font-size: 14px;
+            color: var(--md-sys-color-on-surface-variant);
+        }
+
+        /* Кнопка запуска */
+        .btn-launch {
+            background: transparent;
+            color: var(--md-sys-color-primary);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            font-family: var(--font-family);
+            text-decoration: none;
+        }
+
+        .btn-launch:hover {
+            background-color: rgba(208, 188, 255, 0.08);
+        }
+
+        .btn-launch:active {
+            background-color: rgba(208, 188, 255, 0.12);
+        }
+
+        .empty-state {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--md-sys-color-on-surface-variant);
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Web Eggs</h1>
+        <button class="btn-load" id="loadBtn">Загрузить папку eggs</button>
+        <!-- Скрытый инпут для выбора папки -->
+        <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;">
+    </header>
+
+    <main id="app">
+        <div class="empty-state">
+            Нажмите «Загрузить папку eggs» вверху,<br>чтобы браузер прочитал ваши HTML файлы.
+        </div>
+    </main>
+
+    <script>
+        const loadBtn = document.getElementById('loadBtn');
+        const folderInput = document.getElementById('folderInput');
+        const app = document.getElementById('app');
+
+        // При клике на кнопку - открываем системный выбор папки
+        loadBtn.addEventListener('click', () => {
+            folderInput.click();
+        });
+
+        // Когда пользователь выбрал папку
+        folderInput.addEventListener('change', async (event) => {
+            const files = event.target.files;
+            if (!files.length) return;
+
+            app.innerHTML = ''; // Очищаем экран
+            let htmlCount = 0;
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+
+                // Нас интересуют только HTML файлы
+                if (file.name.endsWith('.html')) {
+                    htmlCount++;
+                    try {
+                        // Читаем содержимое файла как текст
+                        const text = await file.text();
+                        
+                        // Ищем тег <title> внутри HTML
+                        const titleMatch = text.match(/<title>(.*?)<\/title>/i);
+                        const pageTitle = titleMatch ? titleMatch[1] : 'Без названия';
+                        
+                        // Имя файла без расширения .html
+                        const fileName = file.name.replace('.html', '');
+
+                        // Создаем карточку
+                        const card = document.createElement('div');
+                        card.className = 'egg-card';
+                        
+                        // Важно: file.webkitRelativePath сохраняет путь (eggs/game.html)
+                        // Это позволит ссылке работать корректно из корневой папки
+                        const filePath = file.webkitRelativePath || `eggs/${file.name}`;
+
+                        card.innerHTML = `
+                            <div class="egg-info">
+                                <div class="egg-filename">${escapeHTML(fileName)}</div>
+                                <div class="egg-title">${escapeHTML(pageTitle)}</div>
+                            </div>
+                            <a href="${filePath}" target="_blank" class="btn-launch">Запуск</a>
+                        `;
+
+                        app.appendChild(card);
+
+                    } catch (err) {
+                        console.error(`Ошибка чтения файла ${file.name}:`, err);
+                    }
+                }
+            }
+
+            if (htmlCount === 0) {
+                app.innerHTML = '<div class="empty-state">В выбранной папке нет HTML файлов.</div>';
+            }
+        });
+
+        // Функция защиты от XSS (чтобы названия файлов не сломали верстку)
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag)
+            );
+        }
+    </script>
+</body>
+</html>
