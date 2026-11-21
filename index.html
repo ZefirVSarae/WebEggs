@@ -4,26 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web Eggs</title>
+    
+    <!-- Пиксельный шрифт -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            /* Material 3 Expressive Dark Theme */
             --md-sys-color-background: #1a1a1a;
             --md-sys-color-surface-container: #2b2b2b;
             --md-sys-color-surface-container-hover: #383838;
             --md-sys-color-on-surface: #e6e1e5;
             --md-sys-color-on-surface-variant: #cac4d0;
             --md-sys-color-primary: #d0bcff;
-            --md-sys-color-primary-container: #4f378b;
             --md-sys-color-outline: #49454f;
             --font-family: system-ui, -apple-system, sans-serif;
-            --font-pixel: 'Courier New', Courier, monospace;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             background-color: var(--md-sys-color-background);
@@ -34,45 +33,22 @@
             flex-direction: column;
         }
 
-        /* Шапка */
+        /* Шапка сайта */
         header {
-            padding: 24px;
+            padding: 32px 24px;
             border-bottom: 1px solid var(--md-sys-color-outline);
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            justify-content: center; /* Центрируем, так как кнопки больше нет */
         }
 
         h1 {
-            font-family: var(--font-pixel);
+            font-family: 'Press Start 2P', monospace;
             font-size: 28px;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            font-weight: normal;
+            line-height: 1.4;
             color: #ffffff;
-            text-shadow: 2px 2px 0px #000;
-        }
-
-        /* Кнопка выбора папки */
-        .btn-load {
-            background-color: var(--md-sys-color-primary-container);
-            color: var(--md-sys-color-primary);
-            border: none;
-            padding: 12px 24px;
-            border-radius: 100px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-family: var(--font-family);
-        }
-
-        .btn-load:hover {
-            background-color: #5e46a3;
-        }
-
-        .btn-load:active {
-            transform: scale(0.96);
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.5);
+            text-align: center;
         }
 
         /* Контейнер карточек */
@@ -98,159 +74,188 @@
             animation: fadeIn 0.3s ease-out forwards;
             opacity: 0;
             transform: translateY(10px);
+            gap: 16px;
         }
 
         @keyframes fadeIn {
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .egg-card:hover {
-            background-color: var(--md-sys-color-surface-container-hover);
-        }
-
-        .egg-card:active {
-            transform: scale(0.98);
-        }
+        .egg-card:hover { background-color: var(--md-sys-color-surface-container-hover); }
+        .egg-card:active { transform: scale(0.98); }
 
         .egg-info {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
+            overflow: hidden;
         }
 
         .egg-filename {
             font-size: 18px;
-            font-weight: 500;
+            font-weight: 600;
             color: var(--md-sys-color-on-surface);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .egg-title {
             font-size: 14px;
             color: var(--md-sys-color-on-surface-variant);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        /* Кнопка запуска */
         .btn-launch {
             background: transparent;
             color: var(--md-sys-color-primary);
             border: none;
-            padding: 10px 24px;
+            padding: 12px 24px;
             border-radius: 100px;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             transition: background-color 0.2s ease;
             font-family: var(--font-family);
             text-decoration: none;
+            white-space: nowrap;
         }
 
-        .btn-launch:hover {
-            background-color: rgba(208, 188, 255, 0.08);
-        }
-
-        .btn-launch:active {
-            background-color: rgba(208, 188, 255, 0.12);
-        }
+        .btn-launch:hover { background-color: rgba(208, 188, 255, 0.08); }
 
         .empty-state {
             text-align: center;
             margin-top: 40px;
             color: var(--md-sys-color-on-surface-variant);
             font-size: 16px;
+            line-height: 1.5;
+            padding: 0 20px;
+        }
+
+        /* --- АДАПТИВНОСТЬ ДЛЯ ТЕЛЕФОНОВ --- */
+        @media (max-width: 600px) {
+            h1 { font-size: 20px; }
+            .egg-card {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+            .btn-launch {
+                background-color: rgba(208, 188, 255, 0.1);
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Web Eggs</h1>
-        <button class="btn-load" id="loadBtn">Загрузить папку eggs</button>
-        <!-- Скрытый инпут для выбора папки -->
-        <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;">
+        <h1>WEB EGGS</h1>
     </header>
 
     <main id="app">
-        <div class="empty-state">
-            Нажмите «Загрузить папку eggs» вверху,<br>чтобы браузер прочитал ваши HTML файлы.
-        </div>
+        <div class="empty-state">Сканируем репозиторий...</div>
     </main>
 
     <script>
-        const loadBtn = document.getElementById('loadBtn');
-        const folderInput = document.getElementById('folderInput');
         const app = document.getElementById('app');
 
-        // При клике на кнопку - открываем системный выбор папки
-        loadBtn.addEventListener('click', () => {
-            folderInput.click();
-        });
-
-        // Когда пользователь выбрал папку
-        folderInput.addEventListener('change', async (event) => {
-            const files = event.target.files;
-            if (!files.length) return;
-
-            app.innerHTML = ''; // Очищаем экран
-            let htmlCount = 0;
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-
-                // Нас интересуют только HTML файлы
-                if (file.name.endsWith('.html')) {
-                    htmlCount++;
-                    try {
-                        // Читаем содержимое файла как текст
-                        const text = await file.text();
-                        
-                        // Ищем тег <title> внутри HTML
-                        const titleMatch = text.match(/<title>(.*?)<\/title>/i);
-                        const pageTitle = titleMatch ? titleMatch[1] : 'Без названия';
-                        
-                        // Имя файла без расширения .html
-                        const fileName = file.name.replace('.html', '');
-
-                        // Создаем карточку
-                        const card = document.createElement('div');
-                        card.className = 'egg-card';
-                        
-                        // Важно: file.webkitRelativePath сохраняет путь (eggs/game.html)
-                        // Это позволит ссылке работать корректно из корневой папки
-                        const filePath = file.webkitRelativePath || `eggs/${file.name}`;
-
-                        card.innerHTML = `
-                            <div class="egg-info">
-                                <div class="egg-filename">${escapeHTML(fileName)}</div>
-                                <div class="egg-title">${escapeHTML(pageTitle)}</div>
-                            </div>
-                            <a href="${filePath}" target="_blank" class="btn-launch">Запуск</a>
-                        `;
-
-                        app.appendChild(card);
-
-                    } catch (err) {
-                        console.error(`Ошибка чтения файла ${file.name}:`, err);
-                    }
-                }
+        // Функция для определения владельца и названия репозитория из URL
+        function getRepoInfo() {
+            const hostname = window.location.hostname;
+            const pathParts = window.location.pathname.split('/').filter(p => p);
+            
+            if (hostname.endsWith('.github.io')) {
+                const owner = hostname.split('.')[0];
+                // Если сайт на поддомене (username.github.io/repo), то репозиторий - первый кусок пути
+                // Если сайт корневой (username.github.io), то репозиторий - username.github.io
+                const repo = pathParts.length > 0 ? pathParts[0] : `${owner}.github.io`;
+                return { owner, repo };
             }
-
-            if (htmlCount === 0) {
-                app.innerHTML = '<div class="empty-state">В выбранной папке нет HTML файлов.</div>';
-            }
-        });
-
-        // Функция защиты от XSS (чтобы названия файлов не сломали верстку)
-        function escapeHTML(str) {
-            return str.replace(/[&<>'"]/g, 
-                tag => ({
-                    '&': '&amp;',
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    "'": '&#39;',
-                    '"': '&quot;'
-                }[tag] || tag)
-            );
+            return null;
         }
+
+        async function loadEggs() {
+            const repoInfo = getRepoInfo();
+            
+            if (!repoInfo) {
+                app.innerHTML = '<div class="empty-state">Это не GitHub Pages. Скрипт работает только там.</div>';
+                return;
+            }
+
+            try {
+                // Запрашиваем список файлов в папке eggs через GitHub API
+                const apiUrl = `https://api.github.com/repos/${repoInfo.owner}/${repoInfo.repo}/contents/eggs`;
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) throw new Error('Ошибка API');
+
+                const files = await response.json();
+                const htmlFiles = files.filter(f => f.name.endsWith('.html'));
+
+                if (htmlFiles.length === 0) {
+                    app.innerHTML = '<div class="empty-state">В папке eggs пока нет HTML файлов.</div>';
+                    return;
+                }
+
+                app.innerHTML = ''; // Очищаем экран
+
+                // Проходимся по каждому файлу, чтобы вытащить его <title>
+                const eggPromises = htmlFiles.map(async (file) => {
+                    try {
+                        // Скачиваем сам файл, чтобы прочитать его заголовок
+                        const fileRes = await fetch(file.download_url);
+                        const text = await fileRes.text();
+                        const titleMatch = text.match(/<title>(.*?)<\/title>/i);
+                        
+                        return {
+                            name: file.name.replace('.html', ''),
+                            title: titleMatch ? titleMatch[1] : 'Без названия',
+                            url: `eggs/${file.name}` // Относительная ссылка для запуска
+                        };
+                    } catch (e) {
+                        return { name: file.name.replace('.html', ''), title: 'Ошибка чтения', url: `eggs/${file.name}` };
+                    }
+                });
+
+                // Ждем, пока прочитаются все файлы
+                const eggs = await Promise.all(eggPromises);
+
+                // Рендерим карточки
+                eggs.forEach(egg => {
+                    const card = document.createElement('div');
+                    card.className = 'egg-card';
+                    card.innerHTML = `
+                        <div class="egg-info">
+                            <div class="egg-filename">${escapeHTML(egg.name)}</div>
+                            <div class="egg-title">${escapeHTML(egg.title)}</div>
+                        </div>
+                        <a href="${escapeHTML(egg.url)}" target="_blank" class="btn-launch">Запуск</a>
+                    `;
+                    app.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error(error);
+                app.innerHTML = `
+                    <div class="empty-state" style="color: #ffb4ab;">
+                        Не удалось загрузить список.<br>
+                        Убедитесь, что репозиторий публичный, а папка называется <b>eggs</b>.
+                    </div>
+                `;
+            }
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, tag => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            }[tag] || tag));
+        }
+
+        // Запускаем
+        document.addEventListener('DOMContentLoaded', loadEggs);
     </script>
 </body>
 </html>
